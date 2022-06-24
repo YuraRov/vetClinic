@@ -1,4 +1,6 @@
 ﻿using Core.Entities;
+using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace Core.Interfaces.Repositories
 {

@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace Core.Interfaces.Repositories
 {
@@ -10,6 +11,12 @@ namespace Core.Interfaces.Repositories
              Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
              string includeProperties = "",
              bool asNoTracking = false);
+
+        Task<IList<T>> TestGet(
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> includeProperties = null,
+            bool asNoTracking = false);
 
         Task<T?> GetById(int id, string includeProperties = "");
 

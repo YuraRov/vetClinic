@@ -1,6 +1,7 @@
 ﻿using Core.Interfaces.Repositories;
 using DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace DataAccess.Repositories
@@ -36,6 +37,28 @@ namespace DataAccess.Repositories
             }
             
             return set;
+        }
+
+        public async Task<IList<T>> TestGet(
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>> includeProperties = null, 
+            bool asNoTracking = false)
+        {
+            var query = GetQuery(filter, orderBy);
+            query = includeProperties(query);
+
+            if (asNoTracking)
+
+            {
+                var noTrackingResult = await query.AsNoTracking()
+                    .ToListAsync();
+
+                return noTrackingResult;
+            }
+
+            var trackingResult = await query.ToListAsync();
+            return trackingResult;
         }
 
         public async Task<IList<T>> GetAsync(

@@ -3,6 +3,7 @@ using Core.Exceptions;
 using Core.Interfaces;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
 {
@@ -28,7 +29,15 @@ namespace Application.Services
         public async Task<IEnumerable<Specialization>> GetAllSpecializationsAsync()
         {
             _logger.LogInfo($"specializations were recieved");
-            return await _repository.GetAsync(asNoTracking: true, includeProperties: "ProcedureSpecializations.Procedure,UserSpecializations,UserSpecializations.User");
+            return await _repository.TestGet(
+                asNoTracking: true,
+                includeProperties: query =>
+                    query
+                    .Include(spec => spec.ProcedureSpecializations)
+                        .ThenInclude(ps => ps.Procedure)
+                    .Include(spec => spec.UserSpecializations)
+                        .ThenInclude(us => us.User));
+            //return await _repository.GetAsync(asNoTracking: true, includeProperties: "ProcedureSpecializations.Procedure,UserSpecializations,UserSpecializations.User");
         }
 
         public async Task<Specialization> GetSpecializationByIdAsync(int id)
