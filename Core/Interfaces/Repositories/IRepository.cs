@@ -14,6 +14,10 @@ namespace Core.Interfaces.Repositories
 
         Task<T?> GetById(int id, string includeProperties = "");
 
+        Task<T?> QueryById(
+            int id,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null);
+
         Task<IList<T>> QueryAsync(
             Expression<Func<T, bool>>? filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,

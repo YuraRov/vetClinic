@@ -104,6 +104,19 @@ namespace DataAccess.Repositories
             return query.SingleOrDefault();
         }
 
+        public async Task<T?> QueryById(int id, Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
+        {
+            var result =  await _clinicContext.Set<T>().FindAsync(id);
+            
+            if (include == null)
+                return result;
+
+            IQueryable<T> set = _clinicContext.Set<T>();
+            set = include(set);
+
+            return await set.FirstOrDefaultAsync(entity => entity == result);
+        }
+
         public async Task<T?> GetById(int id, string includeProperties = "")
         {
             if (string.IsNullOrEmpty(includeProperties))
