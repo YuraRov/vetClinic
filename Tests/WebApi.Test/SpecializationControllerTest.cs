@@ -6,6 +6,7 @@ using Core.ViewModels.ProcedureViewModels;
 using Core.ViewModels.SpecializationViewModels;
 using Core.ViewModels.User;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebApi.Test.Fixtures;
 
@@ -272,6 +273,21 @@ namespace WebApi.Test
             Assert.NotNull(result);
             Assert.NotEmpty(result);
             Assert.IsAssignableFrom<IEnumerable<ProcedureReadViewModel>>(result);
+        }
+
+        [Fact]
+        public async Task RemoveProcedure_whenSpecializationExists_thenReturnNoContent()
+        {
+            int specializationId = 2;
+            int procedureId = 2;
+
+            var result = await _fixture.MockController.RemoveProcedureFromSpecialization(specializationId, procedureId);
+
+            Assert.NotNull(result);
+            Assert.IsType<NoContentResult>(result);
+
+            _fixture.MockSpecializationService.Verify(service => 
+                service.RemoveProcedureFromSpecialization(specializationId, procedureId), Times.Once);
         }
     }
 }
