@@ -29,7 +29,7 @@ namespace WebApi.Test
             int specializationId = 2;
 
             _fixture.MockSpecializationService
-                .Setup(service => 
+                .Setup(service =>
                     service.GetSpecializationByIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(_fixture.ExpectedSpecialization);
 
@@ -69,7 +69,7 @@ namespace WebApi.Test
 
 
         [Fact]
-        public async Task GetAllSpecializations_whenResultIsNotEmpty_thenStatusCodeOk ()
+        public async Task GetAllSpecializations_whenResultIsNotEmpty_thenStatusCodeOk()
         {
             _fixture.MockSpecializationService.Setup(service =>
                 service.GetAllSpecializationsAsync(_fixture.TestParameters))
