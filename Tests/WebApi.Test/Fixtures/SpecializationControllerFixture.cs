@@ -59,8 +59,10 @@ namespace WebApi.Test.Fixtures
         public SpecializationParameters TestParameters { get; set; }
         public PagedReadViewModel<SpecializationViewModel> ExpectedViewModelSpecializations { get; set; }
         public PagedList<Specialization> ExpectedSpecializations { get; set; }
+        public Specialization ExpectedSpecialization { get; set; }
+        public SpecializationViewModel ExpectedSpecializationViewModel { get; set; }
 
-        private SpecializationParameters GenerateParameters()
+    private SpecializationParameters GenerateParameters()
         {
                 return new SpecializationParameters
                 {
