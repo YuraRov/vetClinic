@@ -143,29 +143,29 @@ namespace WebApi.Test
         [Fact]
         public async Task DeleteSpecialization_whenIdIsCorrect_ThenStatusCodeOk()
         {
-            var id = 2;
+            int specializationId = 2;
 
             _fixture.MockSpecializationService.Setup(service =>
                 service.DeleteSpecializationAsync(It.IsAny<int>()))
             .Returns(Task.FromResult<object?>(null))
             .Verifiable();
 
-            var res = await _fixture.MockController.DeleteSpecialization(id);
+            await _fixture.MockController.DeleteSpecialization(specializationId);
 
             _fixture.MockSpecializationService
-                .Verify(m => m.DeleteSpecializationAsync(id), Times.Once);
+                .Verify(m => m.DeleteSpecializationAsync(specializationId), Times.Once);
         }
 
         [Fact]
         public async Task DeleteSpecialization_whenIdIsInvalid_ThenStatusCodeError()
         {
-            var id = 40;
+            var specializationId = 40;
 
             _fixture.MockSpecializationService.Setup(service =>
-                service.DeleteSpecializationAsync(id))
+                service.DeleteSpecializationAsync(specializationId))
             .Throws<NotFoundException>();
 
-            var result =  _fixture.MockController.DeleteSpecialization(id);
+            var result =  _fixture.MockController.DeleteSpecialization(specializationId);
 
             await Assert.ThrowsAsync<NotFoundException>
                 (() => result);
@@ -174,60 +174,40 @@ namespace WebApi.Test
         [Fact]
         public async Task UpdateSpecialization_whenSpecializationIsCorrect_thenStatusCodeOk()
         {
-            int id = 2;
-            var updatedViewModel = new SpecializationViewModel
-            {
-                Id = id,
-                Name = "changed"
-            };
-
-            var mappedUpdated = new Specialization
-            {
-                Id = id,
-                Name = "changed"
-            };
+            int specializationId = 2;
 
             _fixture.MockMapperSpecialization.Setup(mapper =>
                 mapper.Map(It.IsAny<SpecializationViewModel>()))
-            .Returns(mappedUpdated);
+            .Returns(_fixture.ExpectedSpecialization);
 
             _fixture.MockSpecializationService.Setup( service =>
-                service.UpdateSpecializationAsync(It.IsAny<int>(), It.IsAny<Specialization>()))
+                service.UpdateSpecializationAsync(
+                    It.IsAny<int>(), 
+                    It.IsAny<Specialization>()))
             .Returns(Task.FromResult<object?>(null))
             .Verifiable();
 
             var result = 
-                await _fixture.MockController.UpdateSpecialization(id,updatedViewModel);
+                await _fixture.MockController.UpdateSpecialization(specializationId,_fixture.ExpectedSpecializationViewModel);
 
             _fixture.MockSpecializationService.Verify(service =>
-                service.UpdateSpecializationAsync(id, mappedUpdated), Times.Once);
+                service.UpdateSpecializationAsync(specializationId, _fixture.ExpectedSpecialization), Times.Once);
         }
 
         [Fact]
         public async Task UpdateSpecialization_whenSpecializationNotFound_thenReturnStatusCodeError()
         {
-            int id = 90;
-            var updatedViewModel = new SpecializationViewModel
-            {
-                Id = id,
-                Name = "changed"
-            };
-
-            var mappedUpdated = new Specialization
-            {
-                Id = id,
-                Name = "changed"
-            };
+            int specializationId = 90;
 
             _fixture.MockMapperSpecialization.Setup(mapper =>
                 mapper.Map(It.IsAny<SpecializationViewModel>()))
-            .Returns(mappedUpdated);
+            .Returns(_fixture.ExpectedSpecialization);
 
             _fixture.MockSpecializationService.Setup(service =>
-                service.UpdateSpecializationAsync(id, mappedUpdated))
+                service.UpdateSpecializationAsync(specializationId, _fixture.ExpectedSpecialization))
             .Throws<NotFoundException>();
 
-            var result = _fixture.MockController.UpdateSpecialization(id, updatedViewModel);
+            var result = _fixture.MockController.UpdateSpecialization(specializationId, _fixture.ExpectedSpecializationViewModel);
 
             await Assert.ThrowsAsync<NotFoundException>
                 (() => result);
