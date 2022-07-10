@@ -23,36 +23,25 @@ namespace WebApi.Test
         {
             //  Arrange
 
-            int id = 1;
-            var specialization = new Specialization()
-            {
-                Id = id,
-                Name = "surgeon"
-            };
-
-            var specializationViewModel = new SpecializationViewModel()
-            {
-                Id = id,
-                Name = "surgeon"
-            };
+            int specializationId = 2;
 
             _fixture.MockSpecializationService
                 .Setup(service => 
                     service.GetSpecializationByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync(specialization);
+                .ReturnsAsync(_fixture.ExpectedSpecialization);
 
             _fixture.MockMapperSpecializationViewModel
                 .Setup(mapper =>
                     mapper.Map(It.IsAny<Specialization>()))
-                .Returns(specializationViewModel);
+                .Returns(_fixture.ExpectedSpecializationViewModel);
 
             //  Act
 
-            var result = await _fixture.MockController.GetSpecializationById(id);
+            var result = await _fixture.MockController.GetSpecializationById(specializationId);
 
             //  Assert
             Assert.NotNull(result);
-            Assert.Equal(result.Name, specializationViewModel.Name);
+            Assert.IsType<SpecializationViewModel>(result);
         }
 
         [Fact]
@@ -60,28 +49,12 @@ namespace WebApi.Test
         {
             //  Arrange
             int wrongId = 20;
-            var specialization = new Specialization
-            {
-                Id = 4,
-                Name = "surgeon"
-            };
-
-            var specializationViewModel = new SpecializationViewModel
-            {
-                Id = 4,
-                Name = "surgeon"
-            };
 
             _fixture.MockSpecializationService
                 .Setup(service =>
                     service.GetSpecializationByIdAsync
                         (It.Is<int>(id => wrongId == id)))
                 .Throws<NotFoundException>();
-
-            _fixture.MockMapperSpecializationViewModel
-                .Setup(mapper =>
-                    mapper.Map(It.Is<Specialization>(spec => spec == specialization)))
-                .Returns(specializationViewModel);
 
             //  Act
             var result = _fixture.MockController.GetSpecializationById(wrongId);
@@ -147,32 +120,24 @@ namespace WebApi.Test
         [Fact]
         public async Task AddSpecialization_whenDataIsCorrect_thenStatusCodeOk()
         {
-            SpecializationViewModel specialization = new SpecializationViewModel()
-            {
-                Name = "cook"
-            };
-
-            Specialization mappedSpecialization = new Specialization
-            {
-                Name = "cook"
-            };
 
             _fixture.MockMapperSpecialization.Setup(mapper =>
                 mapper.Map(It.IsAny<SpecializationViewModel>()))
-                    .Returns(mappedSpecialization);
+                    .Returns(_fixture.ExpectedSpecialization);
 
             _fixture.MockSpecializationService.Setup(service =>
                 service.AddSpecializationAsync(It.IsAny<Specialization>()))
-                    .ReturnsAsync(mappedSpecialization)
+                    .ReturnsAsync(_fixture.ExpectedSpecialization)
                     .Verifiable();
 
             var result = 
-                await _fixture.MockController.AddSpecialization(specialization);
+                await _fixture.MockController.AddSpecialization(_fixture.ExpectedSpecializationViewModel);
 
             _fixture.MockSpecializationService.Verify(service =>
-                service.AddSpecializationAsync(mappedSpecialization), Times.Once);
+                service.AddSpecializationAsync(_fixture.ExpectedSpecialization), Times.Once);
 
-            Assert.Equal(result.Name,mappedSpecialization.Name);
+            Assert.NotNull(result);
+            Assert.IsType<Specialization>(_fixture.ExpectedSpecialization);
         }
 
         [Fact]

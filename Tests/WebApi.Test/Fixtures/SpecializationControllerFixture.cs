@@ -1,4 +1,3 @@
-using Application.Services;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using Core.Entities;
@@ -25,6 +24,8 @@ namespace WebApi.Test.Fixtures
             TestParameters = GenerateParameters();
             ExpectedViewModelSpecializations = GenerateViewModelSpecializations();
             ExpectedSpecializations = GenerateSpecializations();
+            ExpectedSpecialization = GenerateSpecialization();
+            ExpectedSpecializationViewModel = GenerateSpecializationViewModel();
 
             MockSpecializationService = fixture.Freeze<Mock<ISpecializationService>>();
 
@@ -62,15 +63,6 @@ namespace WebApi.Test.Fixtures
         public Specialization ExpectedSpecialization { get; set; }
         public SpecializationViewModel ExpectedSpecializationViewModel { get; set; }
 
-    private SpecializationParameters GenerateParameters()
-        {
-                return new SpecializationParameters
-                {
-                    PageNumber = 1,
-                    PageSize = 4
-                };
-        }
-
         private PagedReadViewModel<SpecializationViewModel> GenerateViewModelSpecializations()
         {
             var specializations = new List<SpecializationViewModel>
@@ -90,6 +82,14 @@ namespace WebApi.Test.Fixtures
                 Entities = specializations
             };
         }
+        private SpecializationParameters GenerateParameters()
+        {
+            return new SpecializationParameters
+            {
+                PageNumber = 1,
+                PageSize = 4
+            };
+        }
 
         private PagedList<Specialization> GenerateSpecializations()
         {
@@ -100,6 +100,24 @@ namespace WebApi.Test.Fixtures
             };
 
             return new PagedList<Specialization>(specializations, specializations.Count, 1, 4);
+        }
+
+        private Specialization GenerateSpecialization()
+        {
+            return new Specialization
+            {
+                Id = 2,
+                Name = "surgeon"
+            };
+        }
+
+        private SpecializationViewModel GenerateSpecializationViewModel()
+        {
+            return new SpecializationViewModel
+            {
+                Id = 2,
+                Name = "surgeon"
+            };
         }
     }
 }
