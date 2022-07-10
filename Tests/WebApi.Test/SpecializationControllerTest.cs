@@ -2,6 +2,7 @@ using Core.Entities;
 using Core.Exceptions;
 using Core.Paginator;
 using Core.ViewModels;
+using Core.ViewModels.ProcedureViewModels;
 using Core.ViewModels.SpecializationViewModels;
 using Core.ViewModels.User;
 using FluentAssertions;
@@ -230,6 +231,47 @@ namespace WebApi.Test
             Assert.NotNull(result);
             Assert.NotEmpty(result);
             Assert.IsAssignableFrom<IEnumerable<UserReadViewModel>>(result);
+        }
+
+        [Fact]
+        public async Task GetEmployees_whenEmployeesNotExist_thenReturnNothing()
+        {
+            IEnumerable<User> emptyEmployees = new List<User>();
+            IEnumerable<UserReadViewModel> emptyEmployeesViewModels = new List<UserReadViewModel>();
+
+            _fixture.MockSpecializationService.Setup(service =>
+                service.GetEmployeesAsync())
+            .ReturnsAsync(emptyEmployees);
+
+            _fixture.MockMapperUserList.Setup(mapper =>
+                mapper.Map(It.IsAny<IEnumerable<User>>()))
+            .Returns(emptyEmployeesViewModels);
+
+            var result = await _fixture.MockController.GetEmployees();
+
+            Assert.NotNull(result);
+            Assert.Empty(result);
+            Assert.IsAssignableFrom<IEnumerable<UserReadViewModel>>(result);
+        }
+
+        [Fact]
+        public async Task GetSpecializationsProcedures_whenSpecializationExists()
+        {
+            int specializationId = 2;
+
+            _fixture.MockSpecializationService.Setup(service =>
+                service.GetSpecializationProcedures(It.Is<int>(id => specializationId == id)))
+            .ReturnsAsync(_fixture.ExpectedProcedures);
+
+            _fixture.MockMapperListProcedureViewModel.Setup(mapper =>
+                mapper.Map(It.IsAny<IEnumerable<Procedure>>()))
+            .Returns(_fixture.ExpectedProceduresViewModel);
+
+            var result = await _fixture.MockController.GetSpecializationProcedures(specializationId);
+
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.IsAssignableFrom<IEnumerable<ProcedureReadViewModel>>(result);
         }
     }
 }

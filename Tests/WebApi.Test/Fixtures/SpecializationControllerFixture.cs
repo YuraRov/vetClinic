@@ -28,7 +28,8 @@ namespace WebApi.Test.Fixtures
             ExpectedSpecializationViewModel = GenerateSpecializationViewModel();
             ExpectedEmployees = GenerateEmployees();
             ExpectedEmployeesViewModel = GenerateEmployeesViewModel();
-            
+            ExpectedProcedures = GenerateProcedures();
+            ExpectedProceduresViewModel = GenerateProceduresViewModel();    
 
             MockSpecializationService = fixture.Freeze<Mock<ISpecializationService>>();
 
@@ -67,6 +68,8 @@ namespace WebApi.Test.Fixtures
         public SpecializationViewModel ExpectedSpecializationViewModel { get; set; }
         public IEnumerable<User> ExpectedEmployees { get; set; }
         public IEnumerable<UserReadViewModel> ExpectedEmployeesViewModel { get; set; }
+        public IEnumerable<Procedure> ExpectedProcedures { get; set; }
+        public IEnumerable<ProcedureReadViewModel> ExpectedProceduresViewModel { get; set; }
 
         private PagedReadViewModel<SpecializationViewModel> GenerateViewModelSpecializations()
         {
@@ -159,6 +162,52 @@ namespace WebApi.Test.Fixtures
                     FirstName = "Kujo",
                     LastName = "Sasuw",
                     Email = "gH220@gmail.com"
+                }
+            };
+        }
+
+        private IEnumerable<Procedure> GenerateProcedures()
+        {
+            return new List<Procedure>
+            {
+                new Procedure()
+                {
+                    Id = 2,
+                    Name = "ears cleaning",
+                    Description = "ears cleaning description",
+                    DurationInMinutes = 35,
+                    
+                },
+                new Procedure()
+                {
+                    Id = 4,
+                    Name = "exorcism",
+                    Description = "get all evil spirits out",
+                    DurationInMinutes = 60,
+                    Cost = 1000
+                }
+            };
+        }
+
+        private IEnumerable<ProcedureReadViewModel> GenerateProceduresViewModel()
+        {
+            return new List<ProcedureReadViewModel>
+            {
+                new ProcedureReadViewModel
+                {
+                    Id = 2,
+                    Name = "ears cleaning",
+                    Description = "ears cleaning description",
+                    DurationInMinutes = 35,
+
+                },
+                new ProcedureReadViewModel
+                {
+                    Id = 4,
+                    Name = "exorcism",
+                    Description = "get all evil spirits out",
+                    DurationInMinutes = 60,
+                    Cost = 1000
                 }
             };
         }
