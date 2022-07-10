@@ -26,6 +26,9 @@ namespace WebApi.Test.Fixtures
             ExpectedSpecializations = GenerateSpecializations();
             ExpectedSpecialization = GenerateSpecialization();
             ExpectedSpecializationViewModel = GenerateSpecializationViewModel();
+            ExpectedEmployees = GenerateEmployees();
+            ExpectedEmployeesViewModel = GenerateEmployeesViewModel();
+            
 
             MockSpecializationService = fixture.Freeze<Mock<ISpecializationService>>();
 
@@ -62,6 +65,8 @@ namespace WebApi.Test.Fixtures
         public PagedList<Specialization> ExpectedSpecializations { get; set; }
         public Specialization ExpectedSpecialization { get; set; }
         public SpecializationViewModel ExpectedSpecializationViewModel { get; set; }
+        public IEnumerable<User> ExpectedEmployees { get; set; }
+        public IEnumerable<UserReadViewModel> ExpectedEmployeesViewModel { get; set; }
 
         private PagedReadViewModel<SpecializationViewModel> GenerateViewModelSpecializations()
         {
@@ -117,6 +122,44 @@ namespace WebApi.Test.Fixtures
             {
                 Id = 2,
                 Name = "surgeon"
+            };
+        }
+
+        private IEnumerable<User> GenerateEmployees()
+        {
+            return new List<User>
+            {
+                new User
+                {
+                    FirstName = "Karen",
+                    LastName = "Errgghh",
+                    Email = "kk220@gmail.com"
+                },
+                new User
+                {
+                    FirstName = "Kujo",
+                    LastName = "Sasuw",
+                    Email = "gH220@gmail.com"
+                }
+            };
+        }
+
+        private IEnumerable<UserReadViewModel> GenerateEmployeesViewModel()
+        {
+            return new List<UserReadViewModel>
+            {
+                new UserReadViewModel
+                {
+                    FirstName = "Karen",
+                    LastName = "Errgghh",
+                    Email = "kk220@gmail.com"
+                },
+                new UserReadViewModel
+                {
+                    FirstName = "Kujo",
+                    LastName = "Sasuw",
+                    Email = "gH220@gmail.com"
+                }
             };
         }
     }

@@ -3,6 +3,7 @@ using Core.Exceptions;
 using Core.Paginator;
 using Core.ViewModels;
 using Core.ViewModels.SpecializationViewModels;
+using Core.ViewModels.User;
 using FluentAssertions;
 using Moq;
 using WebApi.Test.Fixtures;
@@ -11,12 +12,13 @@ namespace WebApi.Test
 {
     public class SpecializationControllerTest : IClassFixture<SpecializationControllerFixture>
     {
+
+        private readonly SpecializationControllerFixture _fixture;
+
         public SpecializationControllerTest(SpecializationControllerFixture fixture)
         {
             _fixture = fixture;
         }
-
-        private readonly SpecializationControllerFixture _fixture; 
 
         [Fact]
         public async Task GetSpecializationById_whenIdIsCorrect_thenStatusCodeOkReturned()
@@ -187,8 +189,7 @@ namespace WebApi.Test
             .Returns(Task.FromResult<object?>(null))
             .Verifiable();
 
-            var result = 
-                await _fixture.MockController.UpdateSpecialization(specializationId,_fixture.ExpectedSpecializationViewModel);
+            await _fixture.MockController.UpdateSpecialization(specializationId,_fixture.ExpectedSpecializationViewModel);
 
             _fixture.MockSpecializationService.Verify(service =>
                 service.UpdateSpecializationAsync(specializationId, _fixture.ExpectedSpecialization), Times.Once);
@@ -211,6 +212,24 @@ namespace WebApi.Test
 
             await Assert.ThrowsAsync<NotFoundException>
                 (() => result);
+        }
+
+        [Fact]
+        public async Task GetEmployees_whenEmployeesExist_thenReturnEmployees()
+        {
+            _fixture.MockSpecializationService.Setup(service =>
+                service.GetEmployeesAsync())
+            .ReturnsAsync(_fixture.ExpectedEmployees);
+
+            _fixture.MockMapperUserList.Setup(mapper =>
+                mapper.Map(It.IsAny<IEnumerable<User>>()))
+            .Returns(_fixture.ExpectedEmployeesViewModel);
+
+            var result = await _fixture.MockController.GetEmployees();
+
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.IsAssignableFrom<IEnumerable<UserReadViewModel>>(result);
         }
     }
 }
