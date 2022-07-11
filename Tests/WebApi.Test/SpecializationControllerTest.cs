@@ -12,14 +12,35 @@ using WebApi.Test.Fixtures;
 
 namespace WebApi.Test
 {
-    public class SpecializationControllerTest : IClassFixture<SpecializationControllerFixture>
+    public class SpecializationControllerTest : IClassFixture<SpecializationControllerFixture>, IDisposable
     {
-
         private readonly SpecializationControllerFixture _fixture;
+        private bool _disposed;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                _fixture.MockSpecializationService.ResetCalls();
+            }
+
+            _disposed = true;
+        }
 
         public SpecializationControllerTest(SpecializationControllerFixture fixture)
         {
             _fixture = fixture;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         [Fact]
@@ -276,6 +297,21 @@ namespace WebApi.Test
         }
 
         [Fact]
+        public async Task AddProcedure_whenSpecializationExist_thenReturnNoContent()
+        {
+            int specializationId = 2;
+            int procedureId = 2;
+
+            var result = await _fixture.MockController.AddProcedureToSpecialization(specializationId, procedureId);
+
+            Assert.NotNull(result);
+            Assert.IsType<NoContentResult>(result);
+
+            _fixture.MockSpecializationService.Verify(service =>
+                service.AddProcedureToSpecialization(specializationId, procedureId), Times.Once);
+        }
+
+        [Fact]
         public async Task RemoveProcedure_whenSpecializationExists_thenReturnNoContent()
         {
             int specializationId = 2;
@@ -288,6 +324,66 @@ namespace WebApi.Test
 
             _fixture.MockSpecializationService.Verify(service => 
                 service.RemoveProcedureFromSpecialization(specializationId, procedureId), Times.Once);
+        }
+
+        [Fact]
+        public async Task AddUser_whenSpecializationExists_thenReturnNoContent()
+        {
+            int specializationId = 2;
+            int userId = 2;
+
+            var result = await _fixture.MockController.AddUserToSpecialization(specializationId, userId);
+
+            Assert.NotNull(result);
+            Assert.IsType<NoContentResult>(result);
+
+            _fixture.MockSpecializationService.Verify(service =>
+                service.AddUserToSpecialization(specializationId, userId), Times.Once);
+        }
+
+        [Fact]
+        public async Task RemoveUser_whenSpecializationExists_thenReturnNoContent()
+        {
+            int specializationId = 2;
+            int userId = 2;
+
+            var result = await _fixture.MockController.DeleteUserFromSpecialization(specializationId, userId);
+
+            Assert.NotNull(result);
+            Assert.IsType<NoContentResult>(result);
+
+            _fixture.MockSpecializationService.Verify(service =>
+                service.RemoveUserFromSpecialization(specializationId, userId), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateProcedures_whenSpecializationExists_thenReturnNoContent()
+        {
+            int specializationId = 2;
+            
+            var result = await _fixture.MockController.AddProceduresToSpecialization(specializationId, _fixture.TestSpecializationUpdateViewModel);
+
+            Assert.NotNull(result);
+            Assert.IsType<NoContentResult>(result);
+
+            _fixture.MockSpecializationService.Verify(service =>
+                service.UpdateSpecializationProceduresAsync
+                    (specializationId, _fixture.TestSpecializationUpdateViewModel.ProcedureIds), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateUsers_whenSpecializationExists_thenReturnNoContent()
+        {
+            int specializationId = 2;
+
+            var result = await _fixture.MockController.AddUsersToSpecialization(specializationId, _fixture.TestSpecializationUpdateViewModel);
+
+            Assert.NotNull(result);
+            Assert.IsType<NoContentResult>(result);
+
+            _fixture.MockSpecializationService.Verify(service =>
+                service.UpdateSpecializationUsersAsync
+                    (specializationId, _fixture.TestSpecializationUpdateViewModel.UsersIds), Times.Once);
         }
     }
 }

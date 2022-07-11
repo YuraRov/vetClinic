@@ -22,6 +22,7 @@ namespace WebApi.Test.Fixtures
                 new Fixture().Customize(new AutoMoqCustomization());
 
             TestParameters = GenerateParameters();
+            TestSpecializationUpdateViewModel = GenerateSpecializationUpdateViewModel();
             ExpectedViewModelSpecializations = GenerateViewModelSpecializations();
             ExpectedSpecializations = GenerateSpecializations();
             ExpectedSpecialization = GenerateSpecialization();
@@ -66,6 +67,7 @@ namespace WebApi.Test.Fixtures
         public PagedList<Specialization> ExpectedSpecializations { get; set; }
         public Specialization ExpectedSpecialization { get; set; }
         public SpecializationViewModel ExpectedSpecializationViewModel { get; set; }
+        public SpecializationUpdateViewModel TestSpecializationUpdateViewModel { get; set; }
         public IEnumerable<User> ExpectedEmployees { get; set; }
         public IEnumerable<UserReadViewModel> ExpectedEmployeesViewModel { get; set; }
         public IEnumerable<Procedure> ExpectedProcedures { get; set; }
@@ -209,6 +211,17 @@ namespace WebApi.Test.Fixtures
                     DurationInMinutes = 60,
                     Cost = 1000
                 }
+            };
+        }
+
+        private SpecializationUpdateViewModel GenerateSpecializationUpdateViewModel()
+        {
+            return new SpecializationUpdateViewModel
+            {
+                Id = 2,
+                Name = "surgeon",
+                ProcedureIds = new List<int> { 2, 6 },
+                UsersIds = new List<int> { 2, 6 }
             };
         }
     }
