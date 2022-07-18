@@ -3,10 +3,13 @@ using Core.Interfaces.Services;
 using Core.ViewModels.AnimalViewModel;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.AutoMapper.Interface;
-using Core.ViewModels.AppointmentsViewModel;
 using Core.ViewModels;
 using Core.Paginator;
 using Core.Paginator.Parameters;
+using Syncfusion.Pdf;
+using Syncfusion.Pdf.Grid;
+using System.Data;
+using Syncfusion.Drawing;
 
 namespace WebApi.Controllers
 {
@@ -45,6 +48,49 @@ namespace WebApi.Controllers
             var appointments = await _animalService.GetAllAppointmentsWithAnimalIdAsync(animalParameters);
             var map = _pagedMedCardMapper.Map(appointments);
             return map;
+        }
+
+        [HttpGet("generatePDF")]
+        public async Task<FileStreamResult> GeneratePDF([FromQuery] AnimalParameters animalParameters)
+        {
+            var appointments = await _animalService.GetAllAppointmentsWithAnimalIdAsync(animalParameters);
+
+            //Create a new PDF document
+            PdfDocument doc = new PdfDocument();
+            //Add a page
+            PdfPage page = doc.Pages.Add();
+            //Create a PdfGrid
+            PdfGrid pdfGrid = new PdfGrid();
+            //Create a DataTable
+            DataTable dataTable = new DataTable();
+            //Add columns to the DataTable
+            dataTable.Columns.Add("Data");
+            dataTable.Columns.Add("Disease");
+            //Add rows to the DataTable
+            foreach(var x in appointments)
+            {
+                dataTable.Rows.Add(new object[] { $"{x.Date}", $"{x.Disease}"});
+            }
+            //Assign data source
+            pdfGrid.DataSource = dataTable;
+            //Draw grid to the page of PDF document
+            pdfGrid.Draw(page, new PointF(10, 10));
+            //Save the PDF document to stream
+            MemoryStream stream = new MemoryStream();
+            doc.Save(stream);
+            //If the position is not set to '0' then the PDF will be empty.
+            stream.Position = 0;
+            //Close the document.
+            doc.Close(true);
+            //Defining the ContentType for pdf file.
+            string contentType = "application/pdf";
+            //Define the file name.
+            string fileName = "Output.pdf";
+            //Creates a FileContentResult object by using the file contents, content type, and file name.
+            return File(stream, contentType, fileName);
+            //FileStreamResult fileStreamResult = new FileStreamResult(stream, "application/pdf");
+            //fileStreamResult.FileDownloadName = "Sample.pdf";
+            //return fileStreamResult;
         }
 
         [HttpPost]
