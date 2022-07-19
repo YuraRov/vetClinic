@@ -27,6 +27,8 @@ namespace Application.Configuration
             services.AddScoped<IImageParser, ImageParser>();
             services.AddScoped<IAnimalPhotoService, AnimalPhotoService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
+
+            services.AddScoped<IPdfGenerator, AnimalPDFGenerator>();
         }
     }
 }
