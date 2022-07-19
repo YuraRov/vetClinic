@@ -14,7 +14,7 @@ namespace WebApi.Controllers
     public class AnimalController : ControllerBase
     {
         private readonly IAnimalService _animalService;
-        private readonly IPdfGenerator _pdfGenerator;
+        private readonly IPdfGenerator<AnimalParameters> _pdfGenerator;
         private readonly IViewModelMapperUpdater<AnimalViewModel, Animal> _mapperVMtoM;
         private readonly IEnumerableViewModelMapper<IEnumerable<Animal>, IEnumerable<AnimalViewModel>> _mapperAnimalListToList;
         private readonly IViewModelMapper<PagedList<Appointment>, PagedReadViewModel<AnimalMedCardViewModel>> _pagedMedCardMapper;
@@ -24,7 +24,7 @@ namespace WebApi.Controllers
             IViewModelMapperUpdater<AnimalViewModel, Animal> mapperVMtoM,
             IEnumerableViewModelMapper<IEnumerable<Animal>, IEnumerable<AnimalViewModel>> mapperAnimalListToList,
             IViewModelMapper<PagedList<Appointment>, PagedReadViewModel<AnimalMedCardViewModel>> pagedMedCardMapper,
-            IPdfGenerator pdfGenerator)
+            IPdfGenerator<AnimalParameters> pdfGenerator)
         {
             _animalService = animalService;
             _mapperVMtoM = mapperVMtoM;
@@ -52,7 +52,7 @@ namespace WebApi.Controllers
         [HttpGet("generatePDF")]
         public async Task<FileStreamResult> GeneratePDF([FromQuery] AnimalParameters animalParameters)
         {
-            var pdfFileParams = await _pdfGenerator.GetPdfFile(animalParameters);
+            var pdfFileParams = _pdfGenerator.GetPdfFile(animalParameters);
             return File(pdfFileParams.FileStream, pdfFileParams.ContentType, pdfFileParams.DefaultFileName);
         }
 

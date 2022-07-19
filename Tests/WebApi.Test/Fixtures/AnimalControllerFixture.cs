@@ -37,7 +37,7 @@ namespace WebApi.Test.Fixtures
             MockAnimalListToListMapper = fixture.Freeze<Mock<IEnumerableViewModelMapper<IEnumerable<Animal>, IEnumerable<AnimalViewModel>>>>();
             MockAnimalViewModelMapperUpdater = fixture.Freeze<Mock<IViewModelMapperUpdater<AnimalViewModel, Animal>>>();
             MockPagedMedCardMapper = fixture.Freeze<Mock<IViewModelMapper<PagedList<Appointment>, PagedReadViewModel<AnimalMedCardViewModel>>>>();
-            MockAnimalPdfGenerator = fixture.Freeze<Mock<IPdfGenerator>>();
+            MockAnimalPdfGenerator = fixture.Freeze<Mock<IPdfGenerator<AnimalParameters>>>();
 
             MockAnimalController = new AnimalController(
                 MockAnimalService.Object,
@@ -52,7 +52,7 @@ namespace WebApi.Test.Fixtures
         public Mock<IEnumerableViewModelMapper<IEnumerable<Animal>, IEnumerable<AnimalViewModel>>> MockAnimalListToListMapper { get; }
         public Mock<IViewModelMapperUpdater<AnimalViewModel, Animal>> MockAnimalViewModelMapperUpdater { get; }
         public Mock<IViewModelMapper<PagedList<Appointment>, PagedReadViewModel<AnimalMedCardViewModel>>> MockPagedMedCardMapper { get; }
-        public Mock<IPdfGenerator> MockAnimalPdfGenerator { get; }
+        public Mock<IPdfGenerator<AnimalParameters>> MockAnimalPdfGenerator { get; }
         public AnimalController MockAnimalController { get; }
         public Animal ExpectedAnimal { get; }
         public AnimalViewModel ExpectedAnimalViewModel { get; }

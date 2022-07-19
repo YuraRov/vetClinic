@@ -1,6 +1,7 @@
 ﻿using Application.Services;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
+using Core.Paginator.Parameters;
 using DataAccess.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,7 +29,7 @@ namespace Application.Configuration
             services.AddScoped<IAnimalPhotoService, AnimalPhotoService>();
             services.AddScoped<IFeedbackService, FeedbackService>();
 
-            services.AddScoped<IPdfGenerator, AnimalPDFGenerator>();
+            services.AddScoped<IPdfGenerator<AnimalParameters>, AnimalPDFGenerator>();
         }
     }
 }
