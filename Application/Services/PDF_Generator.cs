@@ -16,9 +16,22 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class PDF_Generator
+    public class PDF_Generator<T,K>
     {
+        private readonly T _repository;
+        private readonly IConfiguration _configuration;
+        private readonly string _fileName;
+        private readonly string _contentType;
 
+        public PDF_Generator(T repository, IConfiguration configuration)
+        {
+            _repository = repository;
+            _configuration = configuration;
+            _fileName = _configuration["Pdf:DefaultFileName"];
+            _contentType = _configuration["Pdf:ContentType"];
+        }
+
+        public async Task<PdfFileModel> GetPdfFile(K parameters)
 
     }
 }
