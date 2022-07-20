@@ -19,16 +19,27 @@ namespace WebApi.Controllers
         private readonly IEnumerableViewModelMapper<IEnumerable<Animal>, IEnumerable<AnimalViewModel>> _mapperAnimalListToList;
         private readonly IViewModelMapper<PagedList<Appointment>, PagedReadViewModel<AnimalMedCardViewModel>> _pagedMedCardMapper;
 
+        private readonly IPDF_Generator<Appointment, AnimalParameters> _pDF_Generator;
+
         public AnimalController(
             IAnimalService animalService,
             IViewModelMapperUpdater<AnimalViewModel, Animal> mapperVMtoM,
             IEnumerableViewModelMapper<IEnumerable<Animal>, IEnumerable<AnimalViewModel>> mapperAnimalListToList,
-            IViewModelMapper<PagedList<Appointment>, PagedReadViewModel<AnimalMedCardViewModel>> pagedMedCardMapper)
+            IViewModelMapper<PagedList<Appointment>, PagedReadViewModel<AnimalMedCardViewModel>> pagedMedCardMapper,
+            IPDF_Generator<Appointment,AnimalParameters> pDF_Generator)
         {
             _animalService = animalService;
             _mapperVMtoM = mapperVMtoM;
             _mapperAnimalListToList = mapperAnimalListToList;
             _pagedMedCardMapper = pagedMedCardMapper;
+            _pDF_Generator = pDF_Generator;
+        }
+
+        [HttpGet("generatePDF")]
+        public async Task<FileStreamResult> GeneratePDF([FromQuery] AnimalParameters animalParameters)
+        {
+            var pdfFileParams = await _pDF_Generator.GetPdfFile();
+            return File(pdfFileParams.FileStream, pdfFileParams.ContentType, pdfFileParams.DefaultFileName);
         }
 
         [HttpGet("{ownerId:int:min(1)}")]
